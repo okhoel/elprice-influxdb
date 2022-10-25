@@ -42,7 +42,7 @@ docker run -d \
  --name elprice \
  --network mybridge \
  --restart always \
- okhoel/elpriceinfluxdb:latest
+ ohkay/elpriceinfluxdb:latest
 ```
 If you want to get the prices for a specific day you can use the environment variable PRICE_DATE:
 ```bash
@@ -52,7 +52,7 @@ docker run -d \
  -e INFLUXDB_TOKEN=ThisIsTheTokenYouFoundWhenListingItAfterCreatingTheInfluxDBVersion2== \
  --name elprice \
  --network mybridge \
- okhoel/elpriceinfluxdb:latest
+ ohkay/elpriceinfluxdb:latest
 ```
 If you want to get all the prices for a full month you can use the environment variable PRICE_MONTH:
 ```bash
@@ -62,7 +62,7 @@ docker run -d \
  -e INFLUXDB_TOKEN=ThisIsTheTokenYouFoundWhenListingItAfterCreatingTheInfluxDBVersion2== \
  --name elprice \
  --network mybridge \
- okhoel/elpriceinfluxdb:latest
+ ohkay/elpriceinfluxdb:latest
 ```
 If you specify the date or month the container will stop after the run (unless debugging is turned on). If you specify both date and month only the date is used.
 
