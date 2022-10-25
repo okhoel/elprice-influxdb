@@ -1,12 +1,10 @@
 """Get the norwegian electricity prices for a given period and push them to an InfluxDB"""
 import os
 import sys
-import json
 from datetime import datetime, timedelta
 from enum import Enum
 import requests
 from dateutil import tz
-from influxdb import InfluxDBClient as InfluxDBClientV1
 from influxdb_client import InfluxDBClient, rest
 from influxdb_client.client.write_api import SYNCHRONOUS
 
@@ -31,23 +29,20 @@ def get_day_prices(date: datetime, region: str) -> str | None:
         if response.status_code == 200:
             responsejson = response.json()
             if debug:
-                print(json.dumps(responsejson, indent=4))
-            pricehour = 0
+                print(responsejson)
             returnjson = []
             for price in responsejson:
-                starttime = int(date.replace(hour=pricehour).timestamp())*1000000000
                 element = {
                     "measurement": "price",
                     "tags": {
                         "region": region
                     },
                     "fields": price,
-                    "time": starttime
+                    "time": price['time_start']
                 }
                 if debug:
-                    print(json.dumps(element, indent=4))
+                    print(element)
                 returnjson.append(element)
-                pricehour += 1
             return returnjson
         else:
             print("WARNING: Status code", response.status_code,"when calling", url)
