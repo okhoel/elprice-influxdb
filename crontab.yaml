@@ -1,0 +1,10 @@
+jobs:
+  - name: elprice-schedule
+    command: python3 /elprice.py
+    shell: /bin/bash
+    schedule: "50 11,23 * * *"
+    onFailure:
+      report:
+        shell:
+          shell: /bin/bash
+          command: echo "ERROR - Scheduled run of elprice failed"
