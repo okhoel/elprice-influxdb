@@ -7,9 +7,6 @@ FROM python:3.10-slim-bullseye
 # Labels
 LABEL MAINTAINER="Ole Kristian Hoel <okhoel@gmail.com>"
 
-# Setup external package-sources
-RUN apt update && apt install -y cron --no-install-recommends && rm -rf /var/lib/apt/lists/*
-
 # RUN pip install
 RUN pip3 install requests python-dateutil influxdb influxdb_client yacron
 

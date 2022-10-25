@@ -56,21 +56,15 @@ def get_day_prices(date: datetime, region: str) -> str | None:
         sys.exit(1)
     return None
 
-def write_to_influx(s: str, version: int, database, bucket: str) -> None:
+def write_to_influx(s: str, bucket: str) -> None:
     """Writing data to InfluxDB"""
     if debug:
-        print("Starting to write to InfluxDB version", version, "on", influxhost)
-    if version == 1:
-        #db = InfluxDBClientV1(influxhost, influxport, influxuser, influxpw, influxdb)
-        print("Writing data to InfluxDB using version 1")
+        print("Starting to write to InfluxDB on", influxhost)
+    with InfluxDBClient(url=influxurl, token=influxtoken, org=influxorg) as client:
+        writeclient = client.write_api(write_options=SYNCHRONOUS)
         try:
-            database.write_points(s)
-        except requests.exceptions.ConnectionError:
-            print("ERROR: Unable to connect to", influxhost, "for writing")
-    elif version == 2:
-        try:
-            print("Writing data to InfluxDB using version 2")
-            database.write(record=s, bucket=bucket)
+            print("Writing data points to InfluxDB")
+            writeclient.write(record=s, bucket=bucket)
         except rest.ApiException:
             print("ERROR: Failure writing to database. Invalid token?")
         except requests.exceptions.ConnectionError:
@@ -80,20 +74,16 @@ def write_to_influx(s: str, version: int, database, bucket: str) -> None:
         else:
             if debug:
                 print("Succesfully written data to database")
-    else:
-        print("Trying to write to InfluxDB with other version than 1 or 2: ", version)
-
 
 # settings from EnvionmentValue
 influxhost=os.getenv('INFLUXDB_HOST', "influxdb")
 influxport=os.getenv('INFLUXDB_PORT', '8086')
 influxuser=os.getenv('INFLUXDB_USER', 'root')
 influxpw=os.getenv('INFLUXDB_PW', 'root')
-influxtoken=os.getenv('INFLUXDB_TOKEN')
+influxtoken=os.getenv('INFLUXDB_TOKEN', influxuser+":"+influxpw)
 influxorg=os.getenv('INFLUXDB_ORG', 'my-org')
 influxdb=os.getenv('INFLUXDB_DATABASE', 'elprice')
 influxbucket=os.getenv('INFLUXDB_BUCKET', influxdb)
-influxversion=os.getenv('INFLUXDB_VERSION', '2')
 influxurl="http://"+influxhost+":"+influxport
 priceregion=os.getenv('PRICE_REGION', 'NO3')
 pricedate=os.getenv('PRICE_DATE')
@@ -102,7 +92,6 @@ debug=os.getenv('DEBUG', 'false').lower() == 'true'
 
 if debug:
     print("Environment variables:")
-    print(" InfluxDB version:", influxversion)
     print(" InfluxDB host (v1):", influxuser + "@" + influxhost + ":" + str(influxport))
     print(" InfluxDB password (v1):", '*'*len(influxpw))
     print(" InfluxDB database (v1):", influxdb)
@@ -119,20 +108,6 @@ if debug:
     if pricemonth:
         print(" Chosen month:", pricemonth)
 
-try:
-    influxversion = int(influxversion)
-except ValueError:
-    print("ERROR: InfluxDB version", influxversion, "is not a number. Must be 1 or 2.")
-    sys.exit(1)
-
-if influxversion == 1:
-    db = InfluxDBClientV1(influxhost, influxport, influxuser, influxpw, influxdb)
-elif influxversion == 2:
-    db = InfluxDBClient(url=influxurl, token=influxtoken, org=influxorg).write_api(write_options=SYNCHRONOUS)
-else:
-    print("ERROR: InfluxDB version is:", influxversion, "- Only 1 or 2 is supported")
-    sys.exit(1)
-
 timezone = tz.gettz("Europe/Oslo")
 
 if pricedate:
@@ -141,9 +116,9 @@ if pricedate:
         date = datetime.strptime(pricedate, "%Y-%m-%d").replace(tzinfo=timezone)
         res = get_day_prices(date, priceregion)
         if res:
-            write_to_influx(s=res, version=influxversion, database=db, bucket=influxbucket)
+            write_to_influx(s=res, bucket=influxbucket)
     except ValueError:
-        print("ERROR: Invalid date " + pricedate)
+        print("ERROR: Invalid date", pricedate)
     except Exception as e:
         print("ERROR: Something went wrong:", type(e).__name__)
 elif pricemonth:
@@ -151,11 +126,11 @@ elif pricemonth:
     try:
         m = datetime.strptime(pricemonth, "%Y-%m").replace(tzinfo=timezone)
         numdays = ((m+timedelta(days=31)).replace(day=1)-m).days
-        for day in list(range(1,numdays+1)):
+        for day in range(1,numdays+1):
             date = m.replace(day=day)
             res = get_day_prices(date, priceregion)
             if res:
-                write_to_influx(s=res, version=influxversion, database=db, bucket=influxbucket)
+                write_to_influx(s=res, bucket=influxbucket)
     except ValueError:
         print("ERROR: Invalid month ", pricemonth)
     except Exception as e:
@@ -166,6 +141,4 @@ else:
     for date in [today, today+timedelta(days=1)]:
         res = get_day_prices(date, priceregion)
         if res:
-            write_to_influx(s=res, version=influxversion, database=db, bucket=influxbucket)
-
-db.close()
+            write_to_influx(s=res, bucket=influxbucket)
