@@ -16,32 +16,6 @@ class Region(Enum):
     NO4 = 4
     NO5 = 5
 
-        
-def get_prices_from_url(url: str, region:str) -> str | None:
-    if debug:
-        print(url)
-    response = requests.get(url, timeout=30)
-    if response.status_code == 200:
-        responsejson = response.json()
-        if debug:
-            print(responsejson)
-        returnjson = []
-        for price in responsejson:
-            element = {
-                "measurement": "price",
-                "tags": {
-                    "region": region
-                },
-                "fields": price,
-                "time": price['time_start']
-            }
-            if debug:
-                print(element)
-            returnjson.append(element)
-        return returnjson
-    else:
-        print("WARNING: Status code", response.status_code,"when calling", url)
-
 def get_day_prices(date: datetime, region: str) -> str | None:
     """Get the electricity prices for a given date as json"""
     if hasattr(Region, region):
@@ -49,21 +23,34 @@ def get_day_prices(date: datetime, region: str) -> str | None:
         print("Collecting data for", date.strftime("%Y-%m-%d"))
         urldate = date.strftime('%Y/%m-%d_')
         url = "https://www.hvakosterstrommen.no/api/v1/prices/" + urldate + region + ".json"
-        return get_prices_from_url(url, region)
+        if debug:
+            print(url)
+        response = requests.get(url, timeout=30)
+        if response.status_code == 200:
+            responsejson = response.json()
+            if debug:
+                print(responsejson)
+            returnjson = []
+            for price in responsejson:
+                element = {
+                    "measurement": "price",
+                    "tags": {
+                        "region": region
+                    },
+                    "fields": price,
+                    "time": price['time_start']
+                }
+                if debug:
+                    print(element)
+                returnjson.append(element)
+            return returnjson
+        else:
+            print("WARNING: Status code", response.status_code,"when calling", url)
     else:
         print("ERROR: Illegal region", region, "provided")
         sys.exit(1)
     return None
 
-def get_prices_from_custom_url(url: str, region: str) -> str | None:
-    """Get the electricity prices from a custom url"""
-    if hasattr(Region, region):
-        return get_prices_from_url(url, region)
-    else:
-        print("ERROR: Illegal region", region, "provided")
-        sys.exit(1)
-    return None
-    
 def write_to_influx(s: str, bucket: str) -> None:
     """Writing data to InfluxDB"""
     if debug:
@@ -97,7 +84,6 @@ priceregion=os.getenv('PRICE_REGION', 'NO3')
 pricedate=os.getenv('PRICE_DATE')
 pricemonth=os.getenv('PRICE_MONTH')
 debug=os.getenv('DEBUG', 'false').lower() == 'true'
-customurl=pricemonth=os.getenv('OVERRIDE_URL')
 
 if debug:
     print("Environment variables:")
@@ -116,22 +102,10 @@ if debug:
         print(" Chosen date:", pricedate)
     if pricemonth:
         print(" Chosen month:", pricemonth)
-    if customurl:
-        print(" Custom URL:", customurl)
 
 timezone = tz.gettz("Europe/Oslo")
 
-if customurl:
-    print("Using custom URL:", customurl)
-    try:
-        res = get_prices_from_custom_url(customurl, priceregion)
-        if res:
-            write_to_influx(s=res, bucket=influxbucket)
-    except ValueError:
-        print("ERROR: Invalid date", pricedate)
-    except Exception as e:
-        print("ERROR: Something went wrong:", type(e).__name__)
-elif pricedate:
+if pricedate:
     print("Getting data for one day:", pricedate)
     try:
         date = datetime.strptime(pricedate, "%Y-%m-%d").replace(tzinfo=timezone)

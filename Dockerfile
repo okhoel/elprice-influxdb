@@ -8,7 +8,7 @@ FROM python:3.10-slim-bullseye
 LABEL MAINTAINER="Ole Kristian Hoel <okhoel@gmail.com>"
 
 # RUN pip install
-RUN pip3 install requests python-dateutil influxdb_client yacron --no-cache-dir
+RUN pip3 install requests python-dateutil influxdb influxdb_client yacron
 
 # Copy files
 ADD elprice.py /

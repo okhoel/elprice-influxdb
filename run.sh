@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z "$PRICE_DATE$PRICE_WEEK$PRICE_MONTH$OVERRIDE_URL" ];
+if [ -z "$PRICE_DATE$PRICE_WEEK$PRICE_MONTH" ];
 then
     echo "Setting up scheduled run of elprice.py"
     yacron -c /crontab.yaml
