@@ -88,3 +88,20 @@ If it is not specified it will be set to a combination of INFLUXDB_USER and INFL
 | PRICE_DATE | | YYYY-MM-DD | |
 | PRICE_MONTH | | YYYY-MM | |
 | DEBUG | False | True / False | Will turn on more logging, and leave the container running after getting one date or month |
+| OVERRIDE_URL | | Web url to json file | Used to import data from a custom url - see note |
+
+## Note on OVERRIDE_URL
+In case you need to import data from a different source than the API at https://www.hvakosterstrommen.no/ you can specify it with this environment variable. Doing this will ignore any dates specified.  
+A couple of things to remember:
+* The format of the json file the url points to must be compatible with https://www.hvakosterstrommen.no/strompris-api
+* You still have to specify a price region
+
+### Error in data at https://www.hvakosterstrommen.no/ related to the ending of DST on October 30th 2022
+The ending of daylight savings time on October 30th 2022 meant that this day was 25 hours long, and this introduced an error in the data at https://www.hvakosterstrommen.no/strompris-api. This might be fixed at a later time, but until then the OVERRIDE_URL can be used to correct this data. Corrected json files for each region can be found here:
+| Region | URL |
+| -- | -- |
+| NO1 | https://gist.github.com/okhoel/e13bcb8713374d121eaf5101da79a917/raw/cf790c3b2b64653416010ee978513cf24029138a/elprice_2022_10_30_NO1.json |
+| NO2 | https://gist.github.com/okhoel/ba55d5ee8f71df73e1d574fb704d7aec/raw/8e441bf77812f91cb5cea099037526791cab0454/elprice_2022_10_30_NO2.json |
+| NO3 | https://gist.github.com/okhoel/f1dbbe0788dbaa718eee2dce69926cf0/raw/c7584946654fe1ded7f23195c29274e3a53373e9/elprice_2022_10_30_NO3.json |
+| NO4 | https://gist.github.com/okhoel/31b15cfa6dfc622c0ca22dc4c65d2def/raw/eb6f440b84222f60f5415fbb1785554a7e209646/elprice_2022_10_30_NO4.json |
+| NO5 | https://gist.github.com/okhoel/3da25ce540c283da3c7dc105b3e33e35/raw/053ef5d3d82418c82cc4bc3dfc590da80260b909/elprice_2022_10_30_NO5.json |
