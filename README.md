@@ -105,3 +105,7 @@ The ending of daylight savings time on October 30th 2022 meant that this day was
 | NO3 | https://gist.github.com/okhoel/f1dbbe0788dbaa718eee2dce69926cf0/raw/c7584946654fe1ded7f23195c29274e3a53373e9/elprice_2022_10_30_NO3.json |
 | NO4 | https://gist.github.com/okhoel/31b15cfa6dfc622c0ca22dc4c65d2def/raw/eb6f440b84222f60f5415fbb1785554a7e209646/elprice_2022_10_30_NO4.json |
 | NO5 | https://gist.github.com/okhoel/3da25ce540c283da3c7dc105b3e33e35/raw/053ef5d3d82418c82cc4bc3dfc590da80260b909/elprice_2022_10_30_NO5.json |
+
+# Version history
+## 1.0.0
+* Initial version
