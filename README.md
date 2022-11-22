@@ -33,7 +33,7 @@ docker exec influxdb influx auth list --user 'influxuser' --hide-headers | cut -
 ```
 ## Set up elprice-influxdb
 You need to provide the hostname for the InfluxDB. You should also give the price region you are interested in. If you have InfluxDB version 2 you also need to provide the access token.
-A standard run that wil set up the scheduled job could look like this:
+A standard run that will set up the scheduled job could look like this:
 ```bash
 docker run -d \
  -e INFLUXDB_HOST=influxdb \
