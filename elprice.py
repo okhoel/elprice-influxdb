@@ -15,9 +15,9 @@ class Region(Enum):
     NO3 = 3
     NO4 = 4
     NO5 = 5
-
-        
+ 
 def get_prices_from_url(url: str, region:str) -> str | None:
+    """Get electricity prices from a given url"""
     if debug:
         print(url)
     response = requests.get(url, timeout=30)
@@ -41,6 +41,7 @@ def get_prices_from_url(url: str, region:str) -> str | None:
         return returnjson
     else:
         print("WARNING: Status code", response.status_code,"when calling", url)
+    return None
 
 def get_day_prices(date: datetime, region: str) -> str | None:
     """Get the electricity prices for a given date as json"""
