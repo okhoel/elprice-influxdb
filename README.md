@@ -97,6 +97,8 @@ A couple of things to remember:
 * You still have to specify a price region
 
 ### Error in data at https://www.hvakosterstrommen.no/ related to the ending of DST on October 30th 2022
+NOTE: The data in the API is fixed, but these files will be available to use as an example of how to use the OVERRIDE_URL.
+
 The ending of daylight savings time on October 30th 2022 meant that this day was 25 hours long, and this introduced an error in the data at https://www.hvakosterstrommen.no/strompris-api. This might be fixed at a later time, but until then the OVERRIDE_URL can be used to correct this data. Corrected json files for each region can be found here:
 | Region | URL |
 | -- | -- |
@@ -105,3 +107,10 @@ The ending of daylight savings time on October 30th 2022 meant that this day was
 | NO3 | https://gist.github.com/okhoel/f1dbbe0788dbaa718eee2dce69926cf0/raw/c7584946654fe1ded7f23195c29274e3a53373e9/elprice_2022_10_30_NO3.json |
 | NO4 | https://gist.github.com/okhoel/31b15cfa6dfc622c0ca22dc4c65d2def/raw/eb6f440b84222f60f5415fbb1785554a7e209646/elprice_2022_10_30_NO4.json |
 | NO5 | https://gist.github.com/okhoel/3da25ce540c283da3c7dc105b3e33e35/raw/053ef5d3d82418c82cc4bc3dfc590da80260b909/elprice_2022_10_30_NO5.json |
+
+# Version history
+## 1.1.0
+* Added support for getting data from a custom url - OVERRIDE_URL
+* Built containers for linux/arm in addition to linux/amd64
+## 1.0.0
+* Initial version
