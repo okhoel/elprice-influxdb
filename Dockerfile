@@ -1,5 +1,5 @@
 # Pull base image
-FROM python:3.9-slim-bullseye as base
+FROM python:3.10-slim-bullseye as base
 
 # Labels
 LABEL MAINTAINER="Ole Kristian Hoel <okhoel@gmail.com>"
