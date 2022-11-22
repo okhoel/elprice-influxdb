@@ -98,7 +98,7 @@ priceregion=os.getenv('PRICE_REGION', 'NO3')
 pricedate=os.getenv('PRICE_DATE')
 pricemonth=os.getenv('PRICE_MONTH')
 debug=os.getenv('DEBUG', 'false').lower() == 'true'
-customurl=pricemonth=os.getenv('OVERRIDE_URL')
+customurl=os.getenv('OVERRIDE_URL')
 
 if debug:
     print("Environment variables:")
