@@ -6,7 +6,11 @@ Uses the API at https://www.hvakosterstrommen.no/ to get the electricity prices 
 You can specify one date to get the prices for that day, or one month to get the prices for all days that month. If neither is specified a task will be set up that twice a day will get the prices for the current day and the next day.
 All the collected prices will be written to an InfluxDB that you need to provide. The InfluxDB needs to be version 1.8 or later. 
 
-Due to the way the timestamp is collected, only prices on or after 2022-10-02 are available.
+Data in the API is available from 2021-12-01.
+
+# Supported tags and Dockerfile links
+- [`1`, `1.1`, `1.1.0`, `latest`](https://github.com/okhoel/elprice-influxdb/blob/v1.1.0/Dockerfile)
+- [`1.0`](https://github.com/okhoel/elprice-influxdb/blob/v1.0.0/Dockerfile)
 
 # Quickstart
 If you don't have an InfluxDB you can create one in Docker. This is done slightly different with version 1 and version 2.
@@ -18,7 +22,7 @@ docker network create mybridge
 #Start InfluxDB
 docker run -d --name influxdb --network mybridge --restart always -v influxdb2:/var/lib/influxdb influxdb:1.8
 #Create database
-docker exec -d influxdb18 /usr/bin/influx -execute 'create database elprice'
+docker exec -d influxdb /usr/bin/influx -execute 'create database elprice'
 ```
 ## Create InfluxDB version 2.4
 ```bash
@@ -46,9 +50,10 @@ docker run -d \
 ```
 If you want to get the prices for a specific day you can use the environment variable PRICE_DATE:
 ```bash
-docker run -d \
+docker run -d --rm \
  -e INFLUXDB_HOST=influxdb \
  -e PRICE_DATE=2022-10-15 \
+ -e PRICE_REGION=NO3 \
  -e INFLUXDB_TOKEN=ThisIsTheTokenYouFoundWhenListingItAfterCreatingTheInfluxDBVersion2== \
  --name elprice \
  --network mybridge \
@@ -56,9 +61,10 @@ docker run -d \
 ```
 If you want to get all the prices for a full month you can use the environment variable PRICE_MONTH:
 ```bash
-docker run -d \
+docker run -d --rm \
  -e INFLUXDB_HOST=influxdb \
  -e PRICE_MONTH=2022-10 \
+ -e PRICE_REGION=NO3 \
  -e INFLUXDB_TOKEN=ThisIsTheTokenYouFoundWhenListingItAfterCreatingTheInfluxDBVersion2== \
  --name elprice \
  --network mybridge \
@@ -96,10 +102,21 @@ A couple of things to remember:
 * The format of the json file the url points to must be compatible with https://www.hvakosterstrommen.no/strompris-api
 * You still have to specify a price region
 
+### Example of usage
+```docker run -d --rm \
+ -e INFLUXDB_HOST=influxdb \
+ -e OVERRIDE_URL "https://gist.github.com/okhoel/f1dbbe0788dbaa718eee2dce69926cf0/raw/c7584946654fe1ded7f23195c29274e3a53373e9/elprice_2022_10_30_NO3.json" \
+ -e PRICE_REGION=NO3 \
+ -e INFLUXDB_TOKEN=ThisIsTheTokenYouFoundWhenListingItAfterCreatingTheInfluxDBVersion2== \
+ --name elprice \
+ --network mybridge \
+ ohkay/elpriceinfluxdb:latest
+```
+
 ### Error in data at https://www.hvakosterstrommen.no/ related to the ending of DST on October 30th 2022
 NOTE: The data in the API is fixed, but these files will be available to use as an example of how to use the OVERRIDE_URL.
 
-The ending of daylight savings time on October 30th 2022 meant that this day was 25 hours long, and this introduced an error in the data at https://www.hvakosterstrommen.no/strompris-api. This might be fixed at a later time, but until then the OVERRIDE_URL can be used to correct this data. Corrected json files for each region can be found here:
+The ending of daylight savings time on October 30th 2022 meant that this day was 25 hours long, and this introduced an error in the data at https://www.hvakosterstrommen.no/strompris-api. Before the data in the API was fixed the OVERRIDE_URL coul be used to correct this data. Corrected json files for each region can be found here:
 | Region | URL |
 | -- | -- |
 | NO1 | https://gist.github.com/okhoel/e13bcb8713374d121eaf5101da79a917/raw/cf790c3b2b64653416010ee978513cf24029138a/elprice_2022_10_30_NO1.json |
