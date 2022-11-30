@@ -2,7 +2,7 @@ jobs:
   - name: elprice-schedule
     command: python3 /elprice.py
     shell: /bin/bash
-    schedule: "50 11,23 * * *"
+    schedule: "30 12,21 * * *"
     onFailure:
       report:
         shell:
