@@ -9,7 +9,8 @@ All the collected prices will be written to an InfluxDB that you need to provide
 Data in the API is available from 2021-12-01.
 
 # Supported tags and Dockerfile links
-- [`1`, `1.1`, `1.1.0`, `latest`](https://github.com/okhoel/elprice-influxdb/blob/v1.1.0/Dockerfile)
+- [`1`, `1.1`, `1.1.1`, `latest`](https://github.com/okhoel/elprice-influxdb/blob/v1.1.1/Dockerfile)
+- [`1.1.0`](https://github.com/okhoel/elprice-influxdb/blob/v1.1.0/Dockerfile)
 - [`1.0`](https://github.com/okhoel/elprice-influxdb/blob/v1.0.0/Dockerfile)
 
 # Quickstart
@@ -116,7 +117,7 @@ A couple of things to remember:
 ### Error in data at https://www.hvakosterstrommen.no/ related to the ending of DST on October 30th 2022
 NOTE: The data in the API is fixed, but these files will be available to use as an example of how to use the OVERRIDE_URL.
 
-The ending of daylight savings time on October 30th 2022 meant that this day was 25 hours long, and this introduced an error in the data at https://www.hvakosterstrommen.no/strompris-api. Before the data in the API was fixed the OVERRIDE_URL coul be used to correct this data. Corrected json files for each region can be found here:
+The ending of daylight savings time on October 30th 2022 meant that this day was 25 hours long, and this introduced an error in the data at https://www.hvakosterstrommen.no/strompris-api. Before the data in the API was fixed the OVERRIDE_URL could be used to correct this data. Corrected json files for each region can be found here:
 | Region | URL |
 | -- | -- |
 | NO1 | https://gist.github.com/okhoel/e13bcb8713374d121eaf5101da79a917/raw/cf790c3b2b64653416010ee978513cf24029138a/elprice_2022_10_30_NO1.json |
@@ -126,6 +127,8 @@ The ending of daylight savings time on October 30th 2022 meant that this day was
 | NO5 | https://gist.github.com/okhoel/3da25ce540c283da3c7dc105b3e33e35/raw/053ef5d3d82418c82cc4bc3dfc590da80260b909/elprice_2022_10_30_NO5.json |
 
 # Version history
+## 1.1.1
+* Changed time of scheduled run from 11:50 UTC and 23:50 UTC to 12:30 UTC and 21:30 UTC
 ## 1.1.0
 * Added support for getting data from a custom url - OVERRIDE_URL
 * Built containers for linux/arm in addition to linux/amd64
