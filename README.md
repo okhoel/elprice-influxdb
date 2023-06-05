@@ -104,7 +104,8 @@ A couple of things to remember:
 * You still have to specify a price region
 
 ### Example of usage
-```docker run -d --rm \
+```bash
+docker run -d --rm \
  -e INFLUXDB_HOST=influxdb \
  -e OVERRIDE_URL "https://gist.github.com/okhoel/f1dbbe0788dbaa718eee2dce69926cf0/raw/c7584946654fe1ded7f23195c29274e3a53373e9/elprice_2022_10_30_NO3.json" \
  -e PRICE_REGION=NO3 \
